@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e90f4f70852ac60fa53c22c7b97f447b>>
+ * @generated SignedSource<<833bc3b71c023b6a5846fddc5907cd8e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,6 +54,20 @@ v1 = [
         "kind": "ScalarField",
         "name": "email",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "phoneNumber",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -64,7 +78,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RegisterUserMutation",
+    "name": "LoginRegisterUserMutation",
     "selections": (v1/*: any*/),
     "type": "RootMutationType",
     "abstractKey": null
@@ -73,20 +87,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RegisterUserMutation",
+    "name": "LoginRegisterUserMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4fd235f55564868ec8a4cc05a5e67e3b",
+    "cacheID": "fb54995d9abf9661988ad6e760ec70e2",
     "id": null,
     "metadata": {},
-    "name": "RegisterUserMutation",
+    "name": "LoginRegisterUserMutation",
     "operationKind": "mutation",
-    "text": "mutation RegisterUserMutation(\n  $email: String!\n  $password: String!\n) {\n  registerUser(email: $email, password: $password) {\n    id\n    email\n  }\n}\n"
+    "text": "mutation LoginRegisterUserMutation(\n  $email: String!\n  $password: String!\n) {\n  registerUser(email: $email, password: $password) {\n    id\n    email\n    name\n    phoneNumber\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "c9e15100c909baa76d0c61c5692575ec";
+node.hash = "8fa15a47f7f4ac4bb5e07cc5ed73f7e3";
 
 export default node;

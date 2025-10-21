@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6a9c5eb35a83378a12e12469873e2546>>
+ * @generated SignedSource<<dd98585d85a8824e492ac05c498fb34b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -46,7 +46,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "LoginUserMutation",
+    "name": "userMutationsLoginUserMutation",
     "selections": (v1/*: any*/),
     "type": "RootMutationType",
     "abstractKey": null
@@ -55,20 +55,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "LoginUserMutation",
+    "name": "userMutationsLoginUserMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4bb6a6c5faf66818d54632cc74a1199d",
+    "cacheID": "3a1ed4f2c7d9c2a30c6e30504b256190",
     "id": null,
     "metadata": {},
-    "name": "LoginUserMutation",
+    "name": "userMutationsLoginUserMutation",
     "operationKind": "mutation",
-    "text": "mutation LoginUserMutation(\n  $email: String!\n  $password: String!\n) {\n  loginUser(email: $email, password: $password)\n}\n"
+    "text": "mutation userMutationsLoginUserMutation(\n  $email: String!\n  $password: String!\n) {\n  loginUser(email: $email, password: $password)\n}\n"
   }
 };
 })();
 
-node.hash = "11702cd0f63009324457b089a946d0a4";
+node.hash = "63ee93123c03262b9b3c24820411cb31";
 
 export default node;

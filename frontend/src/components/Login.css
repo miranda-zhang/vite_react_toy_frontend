@@ -156,3 +156,43 @@
     align-items: flex-start;
   }
 }
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid #f5c6cb;
+  font-size: 0.9rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.link-button:hover {
+  color: #5a6fd8;
+}
+
+.link-button:disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.login-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+

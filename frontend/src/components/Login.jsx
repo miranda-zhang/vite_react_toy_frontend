@@ -1,36 +1,137 @@
 import { useState } from 'react';
+import { graphql, useMutation } from 'react-relay';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
+const LoginUserMutation = graphql`
+  mutation LoginLoginUserMutation(
+    $email: String!
+    $password: String!
+  ) {
+    loginUser(email: $email, password: $password)
+  }
+`;
+
+const RegisterUserMutation = graphql`
+  mutation LoginRegisterUserMutation(
+    $email: String!
+    $password: String!
+  ) {
+    registerUser(email: $email, password: $password) {
+      id
+      email
+      name
+      phoneNumber
+    }
+  }
+`;
+
 const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
-    rememberMe: false
+    confirmPassword: '',
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const { login } = useAuth();
+
+  const [loginMutation] = useMutation(LoginUserMutation);
+  const [registerMutation] = useMutation(RegisterUserMutation);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
+    setError('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Basic validation - no real authentication
-    if (formData.username && formData.password) {
-      alert(`Login successful!\nUsername: ${formData.username}\nPassword: ${formData.password}\nRemember me: ${formData.rememberMe}\n\n(This is just a demo - no real authentication)`);
-      
-      // Reset form
-      setFormData({
-        username: '',
-        password: '',
-        rememberMe: false
+    setLoading(true);
+    setError('');
+
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (isLogin) {
+      // Login mutation
+      loginMutation({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+        },
+        onCompleted: (response, errors) => {
+          setLoading(false);
+          if (errors) {
+            setError(errors[0].message);
+            return;
+          }
+          
+          if (response.loginUser) {
+            login(
+              { email: formData.email },
+              response.loginUser
+            );
+          }
+        },
+        onError: (error) => {
+          setLoading(false);
+          setError(error.message || 'Login failed');
+        },
       });
     } else {
-      alert('Please fill in all required fields');
+      // Register mutation
+      registerMutation({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+        },
+        onCompleted: (response, errors) => {
+          setLoading(false);
+          if (errors) {
+            setError(errors[0].message);
+            return;
+          }
+          
+          if (response.registerUser) {
+            // Auto-login after successful registration
+            loginMutation({
+              variables: {
+                email: formData.email,
+                password: formData.password,
+              },
+              onCompleted: (loginResponse, loginErrors) => {
+                if (loginErrors) {
+                  setError(loginErrors[0].message);
+                  return;
+                }
+                
+                if (loginResponse.loginUser) {
+                  login(
+                    response.registerUser,
+                    loginResponse.loginUser
+                  );
+                }
+              },
+              onError: (loginError) => {
+                setError(loginError.message || 'Auto-login failed after registration');
+              },
+            });
+          }
+        },
+        onError: (error) => {
+          setLoading(false);
+          setError(error.message || 'Registration failed');
+        },
+      });
     }
   };
 
@@ -38,21 +139,22 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h2>Welcome Back</h2>
-          <p>Please sign in to your account</p>
+          <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+          <p>{isLogin ? 'Please sign in to your account' : 'Sign up for a new account'}</p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username or Email</label>
+            <label htmlFor="email">Email</label>
             <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your username or email"
+              placeholder="Enter your email"
               required
+              disabled={loading}
             />
           </div>
 
@@ -66,30 +168,59 @@ const Login = () => {
               onChange={handleChange}
               placeholder="Enter your password"
               required
+              disabled={loading}
+              minLength={6}
             />
           </div>
 
-          <div className="form-options">
-            <label className="checkbox-label">
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
               <input
-                type="checkbox"
-                name="rememberMe"
-                checked={formData.rememberMe}
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
                 onChange={handleChange}
+                placeholder="Confirm your password"
+                required
+                disabled={loading}
+                minLength={6}
               />
-              <span className="checkmark"></span>
-              Remember me
-            </label>
-            <a href="#" className="forgot-link">Forgot password?</a>
-          </div>
+            </div>
+          )}
 
-          <button type="submit" className="login-button">
-            Sign In
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={loading}
+          >
+            {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <a href="#">Sign up</a></p>
+          <p>
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button 
+              type="button" 
+              className="link-button"
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setError('');
+                setFormData(prev => ({ ...prev, confirmPassword: '' }));
+              }}
+              disabled={loading}
+            >
+              {isLogin ? 'Sign up' : 'Sign in'}
+            </button>
+          </p>
         </div>
       </div>
     </div>
