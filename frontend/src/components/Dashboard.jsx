@@ -17,7 +17,7 @@ const AddPhoneNumberMutation = graphql`
 `;
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [message, setMessage] = useState('');
 
@@ -33,8 +33,12 @@ const Dashboard = () => {
           setMessage(`Error: ${errors[0].message}`);
           return;
         }
+        const updatedUser = response.addPhoneNumber;
         setMessage('Phone number added successfully!');
         setPhoneNumber('');
+        // ✅ update AuthContext so UI re-renders
+        // 🔥 Update the global user state so the new phone number appears
+        login(updatedUser, localStorage.getItem('authToken'));
       },
       onError: (error) => {
         setMessage(`Error: ${error.message}`);
