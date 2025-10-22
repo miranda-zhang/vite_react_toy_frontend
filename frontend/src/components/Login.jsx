@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { graphql, useMutation } from 'react-relay';
+import { fetchQuery } from 'relay-runtime';
+import { environment } from '../relay/environment';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
@@ -18,6 +20,17 @@ const RegisterUserMutation = graphql`
     $password: String!
   ) {
     registerUser(email: $email, password: $password) {
+      id
+      email
+      name
+      phoneNumber
+    }
+  }
+`;
+
+const MeQuery = graphql`
+  query LoginMeQuery {
+    me {
       id
       email
       name
@@ -74,13 +87,27 @@ const Login = () => {
             setError(errors[0].message);
             return;
           }
-          
+
           if (response.loginUser) {
-            login(
-              { email: formData.email },
-              response.loginUser
-            );
+            // Save token for Relay environment
+            localStorage.setItem('authToken', response.loginUser);
+
+            // Update auth context with a placeholder user if needed
+            login({ email: formData.email }, response.loginUser);
+
+            // Now fetch the full user info
+            fetchQuery(environment, MeQuery, {})
+              .toPromise()
+              .then((userData) => {
+                if (userData?.me) {
+                  // Replace context with full user info
+                  login(userData.me, response.loginUser);
+                }
+              })
+              .catch((err) => console.error('Error fetching user details:', err));
           }
+
+
         },
         onError: (error) => {
           setLoading(false);

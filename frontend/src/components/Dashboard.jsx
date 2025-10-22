@@ -34,7 +34,7 @@ const Dashboard = () => {
           return;
         }
         const updatedUser = response.addPhoneNumber;
-        setMessage('Phone number added successfully!');
+        setMessage('Phone number edited successfully!');
         setPhoneNumber('');
         // ✅ update AuthContext so UI re-renders
         // 🔥 Update the global user state so the new phone number appears
@@ -63,7 +63,7 @@ const Dashboard = () => {
         </div>
 
         <div className="phone-section">
-          <h3>Add Phone Number</h3>
+          <h3>Edit Phone Number</h3>
           <div className="phone-input-group">
             <input
               type="tel"
@@ -77,7 +77,7 @@ const Dashboard = () => {
               disabled={isAddingPhone || !phoneNumber.trim()}
               className="add-phone-button"
             >
-              {isAddingPhone ? 'Adding...' : 'Add Phone'}
+              {isAddingPhone ? 'Editing...' : 'Edit Phone'}
             </button>
           </div>
           {message && (
