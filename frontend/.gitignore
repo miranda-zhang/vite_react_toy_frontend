@@ -25,3 +25,6 @@ dist-ssr
 
 # stop changing .env on github.io
 .env
+
+# generated files
+src/__generated__/
